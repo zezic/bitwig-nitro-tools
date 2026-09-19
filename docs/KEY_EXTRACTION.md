@@ -120,8 +120,13 @@ with the structure its container promises. Candidates that verify against
 nothing are reported as unidentified rather than guessed at.
 
 There are few candidates to begin with. A 6.1 jar holds five arrays of 48+
-bytes across roughly 17,000 classes: the three keys, one in the Skia shader
+bytes across its 31,476 classes: the three keys, one in the Skia shader
 filesystem, and one unrelated 257-byte table.
+
+If you unpack the jar to look around, do not trust the file count you get.
+Bitwig's obfuscated names differ only by case, so `Aa.class` and `aA.class` are
+two classes that `unzip` collapses into one file on macOS or Windows, leaving
+17,290 of the 31,476. Read the archive directly, as the script does.
 
 Nothing is printed as hex unless you pass `--hex`.
 

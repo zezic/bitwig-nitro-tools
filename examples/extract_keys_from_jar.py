@@ -38,6 +38,9 @@ JAR_RELATIVE = ("Contents/Java/bitwig.jar", "bin/bitwig.jar", "lib/bitwig/bitwig
 # shorter with "Key too short".
 MIN_KEY = 48
 
+# ``newarray`` with the operand for ``byte``. Every array literal starts here.
+NEWARRAY_BYTE = b"\xbc\x08"
+
 
 # ---------------------------------------------------------------------------
 # reading byte[] literals out of bytecode
@@ -88,13 +91,25 @@ def byte_array_literals(class_bytes: bytes, minimum: int = MIN_KEY) -> list[byte
 
 
 def candidates(jar_path: Path) -> dict[bytes, list[str]]:
-    """Every distinct long ``byte[]`` literal in the jar, and where it is."""
+    """Every distinct long ``byte[]`` literal in the jar, and where it is.
+
+    Every class is looked at. The keys sit in three different packages, so
+    narrowing to the packages they occupy today would stop finding them the
+    release one moves. What is skipped is the walk: a class with no
+    ``newarray byte`` in it cannot hold an array literal, and that check is a
+    substring search rather than a Python loop over every byte. On a 6.1 jar
+    that is 281 classes walked instead of 31,476. No candidate is missed by it,
+    since the pattern being looked for starts with those two bytes.
+    """
     found: dict[bytes, list[str]] = {}
     with zipfile.ZipFile(jar_path) as jar:
         for entry in jar.namelist():
             if not entry.endswith(".class"):
                 continue
-            for array in byte_array_literals(jar.read(entry)):
+            class_bytes = jar.read(entry)
+            if NEWARRAY_BYTE not in class_bytes:
+                continue
+            for array in byte_array_literals(class_bytes):
                 found.setdefault(array, []).append(entry)
     return found
 

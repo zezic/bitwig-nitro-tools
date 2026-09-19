@@ -15,10 +15,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   contiguous bytes, which is why searching the jars for them finds nothing in
   any encoding. The script reads the arrays out of the bytecode and verifies
   each candidate against your own installed archives before reporting it;
-  nothing is printed as hex unless you pass `--hex`. Ships no keys. Verified on
-  Bitwig 5.1.9 and 6.1, which carry byte-identical values for all three:
-  517/517 `nitro-image` members decompile on 6.1, 121/121 `nitro-std` members
-  decrypt to valid Nitro source, and factory `0004` document metadata parses.
+  nothing is printed as hex unless you pass `--hex`. Every class is looked at,
+  but only the 281 of 31,476 that contain a `newarray byte` opcode are walked,
+  and no candidate can hide behind that filter, because the pattern being
+  matched starts with those two bytes. Ships no keys. Verified on Bitwig 5.1.9
+  and 6.1, which carry byte-identical values for all three: 517/517
+  `nitro-image` members decompile on 6.1, 121/121 `nitro-std` members decrypt
+  to valid Nitro source, and factory `0004` document metadata parses.
 
 ### Changed
 
