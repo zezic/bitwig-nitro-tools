@@ -168,14 +168,13 @@ A few things that surfaced while reverse-engineering the format:
   prove Bitwig's loader would accept a *modified* module. That is a separate,
   live, untested question. See
   [docs/NITRO_LOAD_MECHANISM.md](docs/NITRO_LOAD_MECHANISM.md).
-- **Key extraction runs against your own install, not this repo.** Both keys are
-  materialized at runtime — neither appears anywhere in Bitwig's jars, in any
-  encoding — so there is no static or offline key recovery. Recovery goes
-  through a small controller extension this project bundles: you install it, add
-  it once in Bitwig, and it dumps the key for the CLI to pick up
-  (`nitro-extract-keys --install-controller`, then `--live`). That live step
-  loads inside your own licensed Bitwig and is yours to run and confirm; the Dag
-  key (for `0004` documents) is entered manually. See
+- **Key extraction runs against your own install, not this repo.** All three
+  keys are static `byte[]` literals in `bitwig.jar`, built by bytecode rather
+  than stored as contiguous bytes, which is why a `grep` over the jars finds
+  nothing in any encoding. `examples/extract_keys_from_jar.py` reads them out
+  of the bytecode and verifies each against your own archives before reporting
+  it. The bundled controller extension still works and is still documented as
+  the live route. See
   [docs/KEY_EXTRACTION.md](docs/KEY_EXTRACTION.md).
 - **Repacked-image loader acceptance is unproven.** Repacking the archive is
   byte-exact offline, but whether Bitwig loads your repack is one restart-gated

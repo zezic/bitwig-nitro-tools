@@ -6,6 +6,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Static key extraction from `bitwig.jar`**, via
+  `examples/extract_keys_from_jar.py`. All three keys (Dag, `nitro-image` and
+  `nitro-std`) are `byte[]` literals in the jar, built by bytecode
+  (`newarray byte` plus one `bastore` per element) rather than stored as
+  contiguous bytes, which is why searching the jars for them finds nothing in
+  any encoding. The script reads the arrays out of the bytecode and verifies
+  each candidate against your own installed archives before reporting it;
+  nothing is printed as hex unless you pass `--hex`. Ships no keys. Verified on
+  Bitwig 5.1.9 and 6.1, which carry byte-identical values for all three:
+  517/517 `nitro-image` members decompile on 6.1, 121/121 `nitro-std` members
+  decrypt to valid Nitro source, and factory `0004` document metadata parses.
+
+### Changed
+
+- **`docs/KEY_EXTRACTION.md` and the README document the static route**, next
+  to the live-JVM controllers, which are unchanged.
+- `nitro-decrypt-std`'s docstring describes `nitro-std` as the same Dag cipher
+  as `nitro-image`, under a 96-byte key with a 192-byte IV. The command itself
+  is unchanged.
+- Documented that a 5.1.9 `nitro-image` decrypts correctly under this key but
+  does not decompile: the nitrobin container gained a field between 5.1.9 and
+  6.1. That is a format-version gap in the decompiler, not a key failure.
+
 ## [0.2.0] - 2026-08-12
 
 ### Added

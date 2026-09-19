@@ -1,11 +1,13 @@
 """``nitro-decrypt-std``: decrypt your own ``Library/nitro-std`` via Bitwig.
 
-Unlike ``nitro-image`` (a self-inverse Dag/XOR cipher that decrypts fully
-offline — see ``nitro-decrypt-corpus``), each ``nitro-std`` stdlib *source*
-member is wrapped in a runtime PRNG stream cipher that cannot be reproduced
-offline. Decryption therefore runs inside a live Bitwig JVM, via the bundled
+Decryption runs inside a live Bitwig JVM, via the bundled
 ``BitwigNitroStdDump`` controller, which decrypts the whole archive to a tree
 on your disk and writes a manifest.
+
+``nitro-std`` uses the same self-inverse Dag/XOR cipher as ``nitro-image``,
+under a 96-byte key with a 192-byte IV, so it decrypts offline too once you
+have that key (see ``examples/extract_keys_from_jar.py`` and
+``docs/KEY_EXTRACTION.md``). This command takes the live route.
 
 Flow (mirrors ``nitro-extract-keys --live``)::
 
