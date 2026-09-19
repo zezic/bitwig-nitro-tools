@@ -29,7 +29,7 @@ Repack fidelity (measured, not assumed):
     original local header, data descriptor and central-directory record, so an
     identity repack is **byte-identical to the source file**. Recompressing
     instead would NOT be byte-identical: 17 of the 513 members do not reproduce
-    under ``zlib`` level 6, so raw-copy is load-bearing.
+    under ``zlib`` level 6, which is why untouched entries are copied raw.
   * Mutated entries are re-deflated (level 6) and re-encrypted **with the
     entry's original IV**, so only that entry's bytes change; every other
     entry's payload stays identical (its file offset may shift if the mutated
